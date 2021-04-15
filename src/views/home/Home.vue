@@ -9,14 +9,16 @@
     <recommend-view :recommends="recommends"></recommend-view>
     <feature-view></feature-view>
     <tab-control :titles="titles" class="tab-control"></tab-control>
+    <goods-list :goods="goods.pop.list"></goods-list>
   </div>
 </template>
 
 <script>
 import NavBar from "@/components/common/navbar/NavBar";
 import TabControl from "@/components/content/tabControl/TabControl";
+import GoodsList from "@/components/content/goods/GoodsList";
 
-import {getHomeMultidata} from "@/network/home";
+import {getHomeMultidata, getHomeGoods} from "@/network/home";
 
 import HomeSwiper from "@/views/home/childComps/HomeSwiper";
 import RecommendView from "@/views/home/childComps/RecommendView";
@@ -30,23 +32,44 @@ export default {
     HomeSwiper,
     RecommendView,
     FeatureView,
-    TabControl
+    TabControl,
+    GoodsList
   },
   data() {
     return {
       banners: [],
       recommends: [{}],
-      titles: ['流行', '新款', '精选']
+      titles: ['流行', '新款', '精选'],
+      goods: {
+        'pop': {page: 0, list: []},
+        'new': {page: 0, list: []},
+        'sell': {page: 0, list: []},
+      }
     }
   },
   //首页组件创建后发送网络请求
   created() {
-    //函数返回promise
-    getHomeMultidata().then(res => {
-      //保存数据
-      this.banners = res.data.banner.list
-      this.recommends = res.data.recommend.list
-    })
+    //created中一般只进行函数的执行操作，具体操作可以抽离到methods中,并且这样可以方便传递不同参数
+    this.getHomeMultidata()
+    this.getHomeGoods('pop')
+    this.getHomeGoods('new')
+    this.getHomeGoods('sell')
+  },
+  methods: {
+    getHomeMultidata() {
+      //函数返回promise
+      getHomeMultidata().then(res => {
+        //保存数据
+        this.banners = res.data.banner.list
+        this.recommends = res.data.recommend.list
+      })
+    },
+    getHomeGoods(type) {
+      getHomeGoods(type, ++this.goods[type].page).then(res => {
+        this.goods[type].list.push(...res.data.list)
+        console.log(this.goods[type].list)
+      })
+    }
   }
 }
 </script>
@@ -68,5 +91,6 @@ export default {
   .tab-control {
     position: sticky;
     top: 44px;
+    z-index: 99;
   }
 </style>
