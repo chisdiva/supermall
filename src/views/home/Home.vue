@@ -8,8 +8,8 @@
     <home-swiper :banners="banners"></home-swiper>
     <recommend-view :recommends="recommends"></recommend-view>
     <feature-view></feature-view>
-    <tab-control :titles="titles" class="tab-control"></tab-control>
-    <goods-list :goods="goods.pop.list"></goods-list>
+    <tab-control :titles="titles" class="tab-control" @tabClick="tabClick"></tab-control>
+    <goods-list :goods="goods[currentType].list"></goods-list>
   </div>
 </template>
 
@@ -44,7 +44,8 @@ export default {
         'pop': {page: 0, list: []},
         'new': {page: 0, list: []},
         'sell': {page: 0, list: []},
-      }
+      },
+      currentType: 'pop'
     }
   },
   //首页组件创建后发送网络请求
@@ -56,6 +57,15 @@ export default {
     this.getHomeGoods('sell')
   },
   methods: {
+    tabClick(index) {
+      //将goods转为数组
+      this.currentType = Object.keys(this.goods)[index];
+    },
+
+
+    /*
+    网络请求相关方法
+    */
     getHomeMultidata() {
       //函数返回promise
       getHomeMultidata().then(res => {
