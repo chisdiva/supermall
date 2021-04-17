@@ -14,9 +14,9 @@ export default {
   name: "GoodsItem",
   props: {
     goodsItem: {
-      type: Array,
+      type: Object,
       default() {
-        return []
+        return {}
       }
     }
   }
