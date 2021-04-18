@@ -21,10 +21,12 @@ import GoodsList from "@/components/content/goods/GoodsList";
 import BackTop from "@/components/content/backTop/BackTop";
 
 import {getHomeMultidata, getHomeGoods} from "@/network/home";
+import {debounce} from "@/common/utils";
 
 import HomeSwiper from "@/views/home/childComps/HomeSwiper";
 import RecommendView from "@/views/home/childComps/RecommendView";
 import FeatureView from "@/views/home/childComps/FeatureView";
+
 
 
 export default {
@@ -55,16 +57,12 @@ export default {
   },
 
   mounted() {
-      document.addEventListener('scroll', () => {
-        this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-        this.isScroll = this.scrollTop > 400 ? true : false;
-        //判断是否上拉到底
-        if(Math.round(this.scrollTop) + document.documentElement.clientHeight == document.documentElement.scrollHeight) {
-          this.getHomeGoods(this.currentType);
-        }
-      }, true)
+      window.onscroll = debounce(this.scrollListener, 200)
   },
-
+  beforeRouteLeave(to, from, next) {
+    this.$route.meta.y = this.scrollTop
+    next()
+  },
   //首页组件创建后发送网络请求
   created() {
     //created中一般只进行函数的执行操作，具体操作可以抽离到methods中,并且这样可以方便传递不同参数
@@ -73,31 +71,85 @@ export default {
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
   },
+
   methods: {
     tabClick(index) {
       //将goods转为数组
       this.currentType = Object.keys(this.goods)[index];
-      document.documentElement.scrollTop = 557;
+      document.documentElement.scrollTop = 575;
     },
+    //返回顶部
     backTopClick() {
       // document.documentElement.scrollTop = 0;
       document.querySelector('#home').scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
+    },
+    //防抖
+    // debounce(fn, delay) {
+    //   let timer = null;
+    //   //利用闭包，维护全局纯净
+    //   return function() {
+    //     if(timer) {
+    //       clearTimeout(timer);
+    //     }
+    //       timer = setTimeout(() => {
+    //         fn.apply(this)
+    //       }, delay);
+    //   }
+    // },
+    // 节流 时间戳相减
+    // throttle(fn, delay) {
+    //     let previous = 0;
+    //     return function () {
+    //       let now = +new Date();
+    //       if(now - previous > delay) {
+    //         fn.apply(this);
+    //         previous = now;
+    //       }
+    //     }
+    // },
+    //节流 定时器
+    // throttle(fn, delay) {
+    //   let timer = null;
+    //   return function () {
+    //     if(!timer) {
+    //       //定时器不存在则立即执行函数，并开启定时器
+    //       fn.apply(this);
+    //       timer = setTimeout(() => {
+    //         timer = null;
+    //       }, delay)
+    //     }
+    //   }
+    // },
+
+    scrollListener() {
+      console.log('11')
+      this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      this.isScroll = this.scrollTop > 400;
+      //判断是否上拉到底
+      if(Math.round(this.scrollTop) + document.documentElement.clientHeight === document.documentElement.scrollHeight) {
+        this.getHomeGoods(this.currentType);
+      }
     },
 
     /*
     网络请求相关方法
     */
+
     getHomeMultidata() {
       //函数返回promise
       getHomeMultidata().then(res => {
         //保存数据
         this.banners = res.data.banner.list
+        /**
+        * @param res.data.recommend {Object}
+        */
         this.recommends = res.data.recommend.list
       })
     },
     getHomeGoods(type) {
       getHomeGoods(type, ++this.goods[type].page).then(res => {
         this.goods[type].list.push(...res.data.list)
+        console.log('getgoods')
       })
     }
   },

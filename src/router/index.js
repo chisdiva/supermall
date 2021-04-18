@@ -16,23 +16,42 @@ const routes = [
     {
         path: '/home',
         component: Home,
+        meta: {
+            x: 0,
+            y: 0
+        },
     },
     {
         path: '/category',
         component: Category,
+        meta: {
+            x: 0,
+            y: 0
+        },
     },
     {
         path: '/profile',
         component:Profile,
+        meta: {
+            x: 0,
+            y: 0
+        },
     },
     {
         path: '/shopcart',
-        component: ShopCart
+        component: ShopCart,
+        meta: {
+            x: 0,
+            y: 0
+        },
     }
 ]
 const router = new VueRouter({
     routes,
-    mode: 'history'
+    scrollBehavior(to, from, savedPosition) {
+        return to.meta
+    },
+    mode: 'history',
 })
 
 export default router
