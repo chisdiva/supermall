@@ -21,7 +21,7 @@ name: "TabBar"
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 99;
   /*阴影 水平方向0 垂直方向负值*/
   box-shadow: 0 -1px 2px rgba(100, 100, 100, .1);
 }

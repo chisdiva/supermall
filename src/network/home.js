@@ -1,3 +1,4 @@
+//首页网络请求封装
 import {request} from "@/network/request";
 
 export function getHomeMultidata() {

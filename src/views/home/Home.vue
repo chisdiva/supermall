@@ -83,6 +83,15 @@ export default {
       // document.documentElement.scrollTop = 0;
       document.querySelector('#home').scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
     },
+
+    scrollListener() {
+      this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      this.isScroll = this.scrollTop > 400;
+      //判断是否上拉到底
+      if(Math.round(this.scrollTop) + document.documentElement.clientHeight === document.documentElement.scrollHeight) {
+        this.getHomeGoods(this.currentType);
+      }
+    },
     //防抖
     // debounce(fn, delay) {
     //   let timer = null;
@@ -121,15 +130,7 @@ export default {
     //   }
     // },
 
-    scrollListener() {
-      console.log('11')
-      this.scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-      this.isScroll = this.scrollTop > 400;
-      //判断是否上拉到底
-      if(Math.round(this.scrollTop) + document.documentElement.clientHeight === document.documentElement.scrollHeight) {
-        this.getHomeGoods(this.currentType);
-      }
-    },
+
 
     /*
     网络请求相关方法
@@ -149,7 +150,6 @@ export default {
     getHomeGoods(type) {
       getHomeGoods(type, ++this.goods[type].page).then(res => {
         this.goods[type].list.push(...res.data.list)
-        console.log('getgoods')
       })
     }
   },

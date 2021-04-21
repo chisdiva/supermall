@@ -1,6 +1,6 @@
 <template>
-  <div class="goods-item">
-      <img :src="goodsItem.show.img" alt="">
+  <div class="goods-item" @click="itemClick">
+      <img :src="showImage" alt="">
       <div class="goods-info">
         <p>{{goodsItem.title}}</p>
         <span class="price">{{goodsItem.price}}</span>
@@ -18,6 +18,18 @@ export default {
       default() {
         return {}
       }
+    }
+  },
+  computed: {
+    //详情页中推荐和首页商品数据的对象路径不同
+    showImage() {
+      return this.goodsItem.image || this.goodsItem.show.img
+    }
+  },
+  methods: {
+    itemClick() {
+      //要有后退，所以用push
+      this.$router.push('/detail/' + this.goodsItem.iid)
     }
   }
 }

@@ -5,6 +5,7 @@ const Home = () => import('../views/home/Home')
 const Category = () => import('../views/category/Category')
 const Profile = () => import('../views/profile/Profile')
 const ShopCart = () => import('../views/shopcart/ShopCart')
+const Detail = () => import('../views/detail/Detail')
 
 Vue.use(VueRouter)
 
@@ -44,6 +45,10 @@ const routes = [
             x: 0,
             y: 0
         },
+    },
+    {
+        path: '/detail/:iid',
+        component: Detail,
     }
 ]
 const router = new VueRouter({
